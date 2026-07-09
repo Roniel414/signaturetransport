@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signature Transport — Private Chauffeur Service</title>
+<style>
+  :root{
+    --black:#060608;
+    --charcoal:#0F0F12;
+    --card:#161619;
+    --silver:#C0C0C0;
+    --chrome:#E8E8E8;
+    --platinum:#F0F0F0;
+    --steel:#8A8A8A;
+    --dim:#505055;
+    --line:rgba(192,192,192,0.1);
+    --line-bright:rgba(192,192,192,0.22);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--black);
+    color:var(--chrome);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap');
+  .display{font-family:'Cormorant Garamond',Georgia,serif;}
+  a{color:inherit;text-decoration:none;}
+
+  /* NAV */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 6vw;
+    background:rgba(6,6,8,0.96);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-logo img{height:52px;width:auto;}
+  .nav-cta{
+    border:1px solid var(--silver);
+    color:var(--silver);
+    padding:10px 26px;
+    font-size:0.78rem;
+    font-weight:500;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    transition:background 0.25s,color 0.25s;
+  }
+  .nav-cta:hover{background:var(--silver);color:var(--black);}
+
+  /* HERO */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    justify-content:center;align-items:center;
+    text-align:center;
+    padding:140px 6vw 80px;
+    position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%,rgba(192,192,192,0.04),transparent 65%),
+      radial-gradient(ellipse 50% 40% at 20% 100%,rgba(192,192,192,0.03),transparent 60%);
+    pointer-events:none;
+  }
+  .hero-logo{
+    width:220px;margin:0 auto 44px;
+    opacity:0;animation:fadeUp 0.8s ease forwards;animation-delay:0.1s;
+  }
+  .hero-logo img{width:100%;}
+  .eyebrow{
+    color:var(--steel);
+    font-size:0.74rem;letter-spacing:0.28em;text-transform:uppercase;
+    margin-bottom:24px;
+    opacity:0;animation:fadeUp 0.8s ease forwards;animation-delay:0.25s;
+  }
+  .hero h1{
+    font-size:clamp(2.8rem,6.5vw,5.5rem);
+    font-weight:500;line-height:1.05;max-width:800px;
+    color:var(--platinum);
+    opacity:0;animation:fadeUp 0.9s ease forwards;animation-delay:0.35s;
+  }
+  .hero h1 em{font-style:italic;color:var(--silver);}
+  .hero p.sub{
+    margin-top:24px;font-size:1.05rem;
+    color:var(--steel);max-width:500px;font-weight:300;
+    opacity:0;animation:fadeUp 0.9s ease forwards;animation-delay:0.5s;
+  }
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(18px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  /* Route line */
+  .route{
+    margin-top:60px;width:100%;max-width:500px;
+    opacity:0;animation:fadeUp 1s ease forwards;animation-delay:0.6s;
+  }
+  .route-track{
+    position:relative;height:1px;
+    background:linear-gradient(90deg,transparent,var(--silver),transparent);
+    opacity:0.4;
+  }
+  .route-track::before,.route-track::after{
+    content:'';position:absolute;top:50%;transform:translateY(-50%);
+    width:8px;height:8px;border-radius:50%;
+    background:var(--silver);
+    box-shadow:0 0 10px rgba(192,192,192,0.5);
+  }
+  .route-track::before{left:0;}
+  .route-track::after{right:0;}
+  .route-labels{
+    display:flex;justify-content:space-between;margin-top:12px;
+    font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim);
+  }
+
+  .hero-cta{
+    margin-top:48px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
+    opacity:0;animation:fadeUp 1s ease forwards;animation-delay:0.75s;
+  }
+  .btn-primary{
+    background:var(--silver);color:var(--black);
+    font-weight:600;font-size:0.84rem;letter-spacing:0.08em;
+    text-transform:uppercase;padding:16px 40px;
+    transition:background 0.25s,transform 0.2s;
+  }
+  .btn-primary:hover{background:var(--platinum);transform:translateY(-1px);}
+  .btn-ghost{
+    border:1px solid rgba(192,192,192,0.25);color:var(--chrome);
+    font-weight:400;font-size:0.84rem;letter-spacing:0.06em;
+    text-transform:uppercase;padding:16px 32px;
+    transition:border-color 0.25s,background 0.25s;
+  }
+  .btn-ghost:hover{border-color:var(--silver);background:rgba(192,192,192,0.05);}
+
+  /* SECTION */
+  section{padding:110px 6vw;}
+  .section-head{text-align:center;max-width:640px;margin:0 auto 64px;}
+  .section-eyebrow{
+    color:var(--steel);font-size:0.72rem;
+    letter-spacing:0.22em;text-transform:uppercase;margin-bottom:16px;
+  }
+  .section-head h2{
+    font-size:clamp(2rem,4vw,3rem);font-weight:500;color:var(--platinum);
+  }
+  .section-head p{margin-top:16px;color:var(--steel);font-size:1rem;font-weight:300;}
+
+  /* FLEET */
+  .fleet{background:var(--charcoal);}
+  .fleet-hero-img{
+    max-width:900px;margin:0 auto 64px;
+    border:1px solid var(--line);
+    overflow:hidden;
+  }
+  .fleet-hero-img img{width:100%;display:block;}
+  .fleet-grid{
+    max-width:900px;margin:0 auto;
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:1px;background:var(--line);border:1px solid var(--line);
+  }
+  .fleet-card{background:var(--card);padding:44px 36px;position:relative;overflow:hidden;}
+  .fleet-card::after{
+    content:'';position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--silver),transparent);
+    opacity:0.3;
+  }
+  .fleet-badge{
+    font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--steel);margin-bottom:18px;display:inline-block;
+    border:1px solid var(--line-bright);padding:5px 12px;
+  }
+  .fleet-card h3{
+    font-family:'Cormorant Garamond',serif;
+    font-size:2rem;font-weight:500;color:var(--platinum);margin-bottom:6px;
+  }
+  .fleet-card .color{font-size:0.82rem;color:var(--dim);margin-bottom:24px;letter-spacing:0.04em;}
+  .fleet-card ul{list-style:none;color:var(--steel);font-size:0.88rem;font-weight:300;}
+  .fleet-card li{padding:8px 0;border-top:1px solid var(--line);}
+  .fleet-card li:first-child{border-top:none;}
+  .fleet-card li strong{color:var(--chrome);font-weight:500;}
+
+  /* RATES */
+  .rates-section{background:var(--black);}
+  .rate-grid{
+    max-width:1100px;margin:0 auto;
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:1px;background:var(--line);border:1px solid var(--line);
+  }
+  .rate-card{background:var(--charcoal);padding:40px 32px;}
+  .rate-card .label{
+    font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--steel);margin-bottom:18px;
+  }
+  .rate-card .price{
+    font-family:'Cormorant Garamond',serif;
+    font-size:2.6rem;font-weight:500;color:var(--platinum);line-height:1;
+  }
+  .rate-card .price small{
+    font-family:'Inter',sans-serif;font-size:0.88rem;
+    font-weight:300;color:var(--steel);margin-left:6px;
+  }
+  .rate-card ul{margin-top:22px;list-style:none;color:var(--steel);font-size:0.88rem;font-weight:300;}
+  .rate-card li{padding:7px 0;border-top:1px solid var(--line);}
+  .rate-card li:first-child{border-top:none;}
+  .surcharge-note{
+    max-width:1100px;margin:28px auto 0;
+    text-align:center;font-size:0.84rem;color:var(--dim);font-weight:300;
+  }
+  .surcharge-note strong{color:var(--silver);font-weight:500;}
+
+  /* HOW IT WORKS */
+  .flow{max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);}
+  .flow-step{padding:0 32px;border-left:1px solid var(--line);}
+  .flow-step:first-child{border-left:none;padding-left:0;}
+  .flow-step .mark{
+    width:36px;height:36px;border:1px solid var(--line-bright);
+    border-radius:50%;display:flex;align-items:center;justify-content:center;
+    color:var(--silver);font-family:'Cormorant Garamond',serif;
+    font-size:1.05rem;margin-bottom:20px;
+  }
+  .flow-step h3{font-size:1.05rem;font-weight:500;margin-bottom:10px;color:var(--platinum);}
+  .flow-step p{color:var(--steel);font-size:0.9rem;font-weight:300;}
+
+  /* BOOKING */
+  .booking{background:var(--charcoal);}
+  .booking-shell{
+    max-width:900px;margin:0 auto;
+    border:1px solid var(--line);background:var(--black);overflow:hidden;
+  }
+  .booking-head{
+    padding:28px 32px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  }
+  .booking-head h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--platinum);}
+  .booking-head .tag{
+    font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--silver);border:1px solid var(--line-bright);padding:6px 14px;
+  }
+  .calendly-frame{width:100%;height:780px;border:none;background:#f5f5f5;}
+  .booking-note{padding:20px 32px;font-size:0.82rem;color:var(--dim);border-top:1px solid var(--line);font-weight:300;}
+
+  /* CONTACT */
+  .contact-strip{
+    background:var(--card);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:56px 6vw;
+    display:flex;justify-content:center;align-items:center;
+    gap:64px;flex-wrap:wrap;text-align:center;
+  }
+  .contact-item .c-label{
+    font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--dim);margin-bottom:8px;
+  }
+  .contact-item .c-val{
+    font-family:'Cormorant Garamond',serif;
+    font-size:1.3rem;color:var(--platinum);font-weight:500;
+    letter-spacing:0.04em;
+  }
+  .contact-item a:hover .c-val{color:var(--silver);}
+
+  /* POLICY */
+  .policy-section{background:var(--black);}
+  .policy{max-width:760px;margin:0 auto;}
+  .policy-block{margin-bottom:36px;}
+  .policy-block h3{
+    font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--steel);margin-bottom:16px;
+  }
+  .policy-block ul{list-style:none;color:var(--dim);font-size:0.9rem;font-weight:300;}
+  .policy-block li{padding:9px 0 9px 20px;border-top:1px solid var(--line);position:relative;}
+  .policy-block li:first-child{border-top:none;}
+  .policy-block li::before{content:'—';position:absolute;left:0;color:var(--dim);}
+
+  /* FOOTER */
+  footer{
+    padding:44px 6vw 36px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+  }
+  footer img{height:44px;width:auto;}
+  footer .meta{font-size:0.8rem;color:var(--dim);text-align:right;font-weight:300;}
+  .watermark{
+    text-align:center;padding:12px;font-size:0.7rem;
+    letter-spacing:0.1em;color:rgba(80,80,85,0.5);
+    border-top:1px solid var(--line);
+  }
+
+  @media(max-width:760px){
+    .fleet-grid{grid-template-columns:1fr;}
+    .rate-grid{grid-template-columns:1fr;}
+    .flow{grid-template-columns:1fr;gap:32px;}
+    .flow-step{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:28px;}
+    .flow-step:first-child{border-top:none;padding-top:0;}
+    .contact-strip{gap:32px;}
+    .calendly-frame{height:680px;}
+    footer{flex-direction:column;align-items:flex-start;}
+    footer .meta{text-align:left;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><img src="https://raw.githubusercontent.com/Roniel414/signaturetransport/main/logo.png" alt="Signature Transport"></div>
+  <a href="#book" class="nav-cta">Reserve</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-logo"><img src="https://raw.githubusercontent.com/Roniel414/signaturetransport/main/logo.png" alt="Signature Transport"></div>
+  <div class="eyebrow">Private Chauffeur Service</div>
+  <h1 class="display">Where every ride<br>is a <em>signature</em><br>experience.</h1>
+  <p class="sub">Luxury chauffeur service by advance reservation. Black fleet. Impeccable standard. No compromises.</p>
+
+  <div class="route">
+    <div class="route-track"></div>
+    <div class="route-labels"><span>Pickup</span><span>Destination</span></div>
+  </div>
+
+  <div class="hero-cta">
+    <a href="#book" class="btn-primary">Reserve Your Ride</a>
+    <a href="#rates" class="btn-ghost">View Rates</a>
+  </div>
+</section>
+
+<section class="fleet" id="fleet">
+  <div class="section-head">
+    <div class="section-eyebrow">The Fleet</div>
+    <h2 class="display">Two vehicles.<br>One standard of excellence.</h2>
+    <p>Both maintained to concierge condition. Both black. Both commanding.</p>
+  </div>
+
+  <div class="fleet-hero-img">
+    <img src="https://raw.githubusercontent.com/Roniel414/signaturetransport/main/logo.png" alt="Signature Transport Fleet — Range Rover and Maserati">
+  </div>
+
+  <div class="fleet-grid">
+    <div class="fleet-card">
+      <span class="fleet-badge">SUV · Up to 5 Passengers</span>
+      <h3>Range Rover</h3>
+      <div class="color">Santorini Black · Ebony Interior</div>
+      <ul>
+        <li><strong>Ideal for:</strong> Airport arrivals, corporate events, group transfers</li>
+        <li><strong>Amenities:</strong> Premium leather, climate control, tinted windows</li>
+        <li><strong>Luggage:</strong> Full airport-capacity cargo space</li>
+        <li><strong>Rate:</strong> $3.00/mile + gratuity</li>
+      </ul>
+    </div>
+    <div class="fleet-card">
+      <span class="fleet-badge">Sedan · Up to 4 Passengers</span>
+      <h3>Maserati</h3>
+      <div class="color">Nero Ribelle · Tan Sport Interior</div>
+      <ul>
+        <li><strong>Ideal for:</strong> Executive dinners, galas, client impressions</li>
+        <li><strong>Amenities:</strong> Premium audio, sport leather, panoramic roof</li>
+        <li><strong>Luggage:</strong> Carry-on and personal bags</li>
+        <li><strong>Rate:</strong> $3.00/mile + gratuity</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="rates-section" id="rates">
+  <div class="section-head">
+    <div class="section-eyebrow">Rate Structure</div>
+    <h2 class="display">Clear pricing.<br>No surprises.</h2>
+    <p>Mileage-based rates with transparent surcharges. Every charge is stated upfront.</p>
+  </div>
+
+  <div class="rate-grid">
+    <div class="rate-card">
+      <div class="label">Standard Transfer</div>
+      <div class="price">$3<small>/ mile + gratuity</small></div>
+      <ul>
+        <li>Point-to-point reservation</li>
+        <li>Either vehicle available</li>
+        <li>Up to 5 passengers</li>
+      </ul>
+    </div>
+    <div class="rate-card">
+      <div class="label">Hourly Service</div>
+      <div class="price">$100<small>/ hour</small></div>
+      <ul>
+        <li>2-hour minimum</li>
+        <li>$100 non-refundable deposit</li>
+        <li>Multi-stop occasions</li>
+      </ul>
+    </div>
+    <div class="rate-card">
+      <div class="label">Airport Transfer</div>
+      <div class="price">Quoted<small>by route</small></div>
+      <ul>
+        <li>Half fare deposit to confirm</li>
+        <li>Full prepay within 3-hr notice</li>
+        <li>Flight-aware scheduling</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="surcharge-note">Early (before 8 AM) and late (after 7 PM) departures add <strong>+$1/mile</strong>. Peak windows (6:30–9:30 AM, 3:30–7 PM) may add <strong>+$1–$2/mile</strong>. Tolls, parking, and extended waits billed separately.</p>
+</section>
+
+<section>
+  <div class="section-head">
+    <div class="section-eyebrow">How It Works</div>
+    <h2 class="display">Three steps<br>to confirmed.</h2>
+  </div>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="mark">1</div>
+      <h3>Select your window</h3>
+      <p>Choose date and time on the live calendar. Availability reflects the real-time schedule — no double bookings.</p>
+    </div>
+    <div class="flow-step">
+      <div class="mark">2</div>
+      <h3>Confirm with payment</h3>
+      <p>A secure payment link arrives after booking for your deposit or full fare. Your slot is not held until payment clears.</p>
+    </div>
+    <div class="flow-step">
+      <div class="mark">3</div>
+      <h3>Ride in style</h3>
+      <p>Your window is locked. Driver details sent closer to pickup. Any remaining balance settled after the trip.</p>
+    </div>
+  </div>
+</section>
+
+<section class="booking" id="book">
+  <div class="section-head">
+    <div class="section-eyebrow">Reserve</div>
+    <h2 class="display">Book your ride</h2>
+    <p>Select your time below. Payment link follows to lock in your reservation.</p>
+  </div>
+  <div class="booking-shell">
+    <div class="booking-head">
+      <h3>Private Chauffeur Reservation</h3>
+      <span class="tag">Live Calendar</span>
+    </div>
+    <iframe
+      class="calendly-frame"
+      src="https://calendly.com/signaturewhipz/30min?hide_event_type_details=1&background_color=060608&text_color=f0f0f0&primary_color=c0c0c0"
+      title="Book Signature Transport">
+    </iframe>
+    <div class="booking-note">
+      After selecting your time, complete your deposit below to lock in your reservation. Reservations are not confirmed until deposit is received.
+    </div>
+    <div style="padding:28px 32px;border-top:1px solid rgba(192,192,192,0.1);text-align:center;">
+      <a href="https://square.link/u/U5oTnZEU" target="_blank" style="display:inline-block;background:#C0C0C0;color:#060608;font-family:Inter,sans-serif;font-weight:700;font-size:0.88rem;letter-spacing:0.1em;text-transform:uppercase;padding:16px 48px;text-decoration:none;">Pay Deposit to Confirm &rarr;</a>
+      <p style="margin-top:14px;font-size:0.76rem;color:#505055;font-weight:300;">Secure payment powered by Square</p>
+    </div>
+  </div>
+</section>
+
+<div class="contact-strip">
+  <a href="tel:4694906655" class="contact-item">
+    <div class="c-label">Phone</div>
+    <div class="c-val">469.490.6655</div>
+  </a>
+  <a href="mailto:Signaturewhipz@gmail.com" class="contact-item">
+    <div class="c-label">Email</div>
+    <div class="c-val">Signaturewhipz@gmail.com</div>
+  </a>
+  <div class="contact-item">
+    <div class="c-label">Reservations</div>
+    <div class="c-val">By Appointment Only</div>
+  </div>
+</div>
+
+<section class="policy-section">
+  <div class="section-head">
+    <div class="section-eyebrow">Reservation Policy</div>
+    <h2 class="display">The fine print,<br>plainly stated.</h2>
+  </div>
+  <div class="policy">
+    <div class="policy-block">
+      <h3>Confirmation & Payment</h3>
+      <ul>
+        <li>All service is by advance reservation only</li>
+        <li>Airport transfers require half fare to confirm</li>
+        <li>Same-day airport (within 3 hours) requires full prepayment</li>
+        <li>Hourly service requires a $100 non-refundable deposit</li>
+        <li>Reservations are not secured until payment is received</li>
+        <li>Deposits apply toward the final balance unless forfeited under cancellation terms</li>
+      </ul>
+    </div>
+    <div class="policy-block">
+      <h3>Additional Charges</h3>
+      <ul>
+        <li>Extended wait time, extra stops, and route deviations</li>
+        <li>Tolls, parking, and holiday service</li>
+        <li>Special accommodations or extraordinary requests</li>
+      </ul>
+    </div>
+    <div class="policy-block">
+      <h3>Fleet & Capacity</h3>
+      <ul>
+        <li>Range Rover — maximum 5 passengers</li>
+        <li>Maserati — maximum 4 passengers</li>
+        <li>Vehicle subject to availability at time of booking</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <img src="https://raw.githubusercontent.com/Roniel414/signaturetransport/main/logo.png" alt="Signature Transport">
+  <div class="meta">Private Chauffeur Service<br>signaturetransport.vip</div>
+</footer>
+
+<div class="watermark">Built by Sylvester Media Group · sylvestermedia.help</div>
+
+</body>
+</html>
